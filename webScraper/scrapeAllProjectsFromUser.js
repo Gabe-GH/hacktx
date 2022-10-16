@@ -18,9 +18,3 @@ async function scrapeUser(userName){
 
     return info    
 }
-
-(async() => {
-    const data = await scrapeUser("paulchinnam")
-
-    console.log(data)
-})();
