@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Gabe-GH/hacktx#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "puppeteer": "^19.0.0"
+    "puppeteer": "^19.0.0",
+    "string-similarity": "^4.0.4"
   }
 }
