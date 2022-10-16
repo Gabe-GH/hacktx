@@ -1,3 +1,5 @@
+const stringSimilarity = require("string-similarity");
+
 const scrapeProjectInfo = require('./scrapeProjectInfo')
 const scrapeUserInfo = require('./scrapeUserInfo')
 const scrapeUserProjectLinks = require('./scrapeUserProjectLinks')
@@ -45,7 +47,22 @@ async function scrapeUser(userName){
 
     info = {user, userLinks, projects}
 
-    return info    
+    projectArray = info.projects;
+
+    for(let i = 0; i < projectArray.length; i++){
+        let maxSimilarityRatio = 0;
+        for(let j = 0; j < projectArray.length; j++){
+            if(i != j){
+                let tempRatio = stringSimilarity.compareTwoStrings(projectArray[i].appDetailsText, projectArray[j].appDetailsText)
+                if(maxSimilarityRatio < tempRatio)
+                    maxSimilarityRatio = tempRatio
+            }
+        }
+
+        info.projects[i].maxSimilarityRatio = maxSimilarityRatio
+    }
+
+    return info
 }
 
 module.exports = scrapeUser;
