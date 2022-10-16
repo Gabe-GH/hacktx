@@ -18,3 +18,5 @@ async function scrapeUser(userName){
 
     return info    
 }
+
+module.exports = scrapeUser;
