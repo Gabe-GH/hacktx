@@ -23,6 +23,7 @@ async function scrapeUserProjectLinks(userName) {
 
     const [page, browser, response] = await goToURL(userName)
 
+    // error check
     if (response.status() == 404) {
         await browser.close()
         throw new Error({ 'message': 'username not found' })
@@ -31,6 +32,7 @@ async function scrapeUserProjectLinks(userName) {
     const scrapeProjects = await page.evaluate(() => {
 
         const softwareEntries = document.querySelectorAll(".link-to-software");
+
         let projects = []
 
         softwareEntries.forEach((project) => {
@@ -43,5 +45,16 @@ async function scrapeUserProjectLinks(userName) {
     await browser.close();
     return scrapeProjects;
 }
+
+(async () => {
+    try {
+        const data = await scrapeUserProjectLinks('12trinhle')
+        console.log(data)
+    }
+    catch (e) {
+        console.log("error")
+    }
+
+})();
 
 module.exports = scrapeUserProjectLinks;
