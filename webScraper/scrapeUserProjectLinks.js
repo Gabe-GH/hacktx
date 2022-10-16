@@ -1,18 +1,5 @@
 const puppeteer = require('puppeteer')
-
-// puppeteer will go to a user's devpost profile
-//
-// returns page for access of the page's elements
-// returns browser for ability to close the browser
-// returns response for ability to access the page's response code for error handling
-async function goToURL(userName) {
-    const userURI = `https://devpost.com/${userName}`;
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    const response = await page.goto(userURI);
-
-    return [page, browser, response]
-}
+const goToURL = require('./goToURL')
 
 // if a user's profile function will scrape each of the user's project links
 // returns an array of strings containing links to each project
@@ -21,7 +8,9 @@ async function goToURL(userName) {
 // throws an error
 async function scrapeUserProjectLinks(userName) {
 
-    const [page, browser, response] = await goToURL(userName)
+    const userURI = `https://devpost.com/${userName}`
+
+    const [page, browser, response] = await goToURL(userURI)
 
     // error check
     if (response.status() == 404) {
