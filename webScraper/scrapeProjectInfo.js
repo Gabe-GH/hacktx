@@ -11,22 +11,30 @@ async function scrapeProjectInfo(projectLink){
     }
 
     const projectInfo = await page.evaluate(() => {
+        
+        // variables init
         let imageLinks = []
         const hackathonInfo = {}
 
-        const appName = document.querySelector("#app-title").innerText;
-        const images = document.querySelectorAll(".slick-slide:not(.slick-cloned)").forEach(image => {
-            let link = image.querySelector('a').getAttribute('href')
+        // app header info
+        const appName = document.querySelector("#app-title").innerText
+        const appDescription = document.querySelector("#software-header p").innerText
 
-            imageLinks.push(link)
-        })
-
+        // image links
+        const images = document.querySelectorAll(".slick-slide:not(.slick-cloned)")
+        
+        if(images.length != 0){
+           images .forEach(image => {
+                let link = image.querySelector('a').getAttribute('href')
+    
+                imageLinks.push(link)
+            })
+        }
+        
+        // hackathons submitted to info
         const submissionTo = document.querySelector(".software-list-with-thumbnail li")
 
-
         if(submissionTo != null){
-
-
             const hackathonLinks = submissionTo.querySelector(".challenge_avatar")
 
             const hackathonImageLink = hackathonLinks.querySelector("a img").getAttribute('src')
@@ -38,13 +46,46 @@ async function scrapeProjectInfo(projectLink){
             hackathonInfo.hackathonText = hackathonText            
         }
 
-        
-        const info = {appName, imageLinks, hackathonInfo}
+        // app details info
+        let appDetailsText = ''
+
+        const appDetails = document.querySelectorAll("#app-details-left")[0].children[1].querySelectorAll("p")
+
+        if (appDetails.length != 0) {
+            appDetails.forEach(text => {
+                appDetailsText += text.innerText
+            })
+        }
+
+        // built with info
+        const builtWith = []
+
+        const builtWithTags = document.querySelectorAll("#built-with ul li")
+        if(builtWithTags.length != 0){
+            builtWithTags.forEach(tag => {
+                builtWith.push(tag.innerText);
+            })
+        }
+
+        // github repo info
+        const tryItOutLinks = document.querySelectorAll(".app-links ul li")
+        let gitHubRepo = "";
+
+        if(tryItOutLinks.length != 0){
+            tryItOutLinks.forEach(li_tag => {
+                if(li_tag.querySelector("a span").innerText == "GitHub Repo")
+                    gitHubRepo += li_tag.querySelector("a").getAttribute("href")
+            })
+        }
+
+        // combine all info into an object
+        const info = {appName, appDescription, imageLinks, hackathonInfo, appDetailsText, builtWith, gitHubRepo}
 
         return info
 
     })
 
+    // add project link to overall project object
     projectInfo.projectLink = projectLink
 
     await browser.close()
@@ -52,9 +93,4 @@ async function scrapeProjectInfo(projectLink){
     return projectInfo
 }
 
-(async() => {
-    const url = 'https://devpost.com/software/w-hvgn70'
-
-   const data = await scrapeProjectInfo(url)
-   console.log(data)
-})();
+module.exports = scrapeProjectInfo;
