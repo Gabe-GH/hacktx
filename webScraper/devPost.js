@@ -1,12 +1,22 @@
-import puppeteer from 'puppeteer'
+const puppeteer = require('puppeteer')
 
-async function scrapeUserProjectLinks(userName) {
-
+async function goToURL(userName){
     const userURI = `https://devpost.com/${userName}`;
     const browser = await puppeteer.launch();
-
     const page = await browser.newPage();
-    await page.goto(userURI);
+    const response = await page.goto(userURI);
+
+    return [page, browser, response]
+}
+
+async function scrapeUserProjectLinks(userName) {
+    
+    const [page, browser, response] = await goToURL(userName)
+
+    if(response.status() == 404){
+        await browser.close()
+        throw new Error({'message': 'username not found'})
+    }
 
     const scrapeProjects = await page.evaluate(() => {
         
@@ -23,7 +33,6 @@ async function scrapeUserProjectLinks(userName) {
     await browser.close();
 
     return scrapeProjects;
-
 }
 
 module.exports = scrapeUserProjectLinks;
