@@ -32,18 +32,8 @@ async function scrapeUserProjectLinks(userName) {
     })
 
     await browser.close();
+
     return scrapeProjects;
 }
-
-(async () => {
-    try {
-        const data = await scrapeUserProjectLinks('12trinhle')
-        console.log(data)
-    }
-    catch (e) {
-        console.log("error")
-    }
-
-})();
 
 module.exports = scrapeUserProjectLinks;
