@@ -26,18 +26,26 @@ async function scrapeUserInfo(userName) {
         const userLinks = {}
 
         const userLinkTags = document.querySelectorAll("#portfolio-user-links li")
-        if (userLinkTags.length != 0) {
-            userLinkTags.forEach(tag => {
-                const url = tag.querySelector("a").getAttribute("href")
-                const link = tag.querySelector("a").innerText
 
-                userLinks[link] = url
+        // in case of a userLink with no href
+        if (userLinkTags != null) {
+            userLinkTags.forEach(tag => {
+                try{
+                    const url = tag.querySelector("a").getAttribute("href")
+                    const link = tag.querySelector("a").innerText
+
+                    userLinks[link] = url
+                }
+                catch(e){
+                }  
             })
         }
+
 
         const info = {user, userLinks}
         return info
     })
+    
 
     await browser.close();
 
