@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const goToURL = require('./goToURL')
 
-async function scrapeProjectInfo(projectLink){
+async function scrapeProjectInfo(projectLink) {
     const [page, browser, response] = await goToURL(projectLink);
 
     // error check
@@ -11,7 +11,7 @@ async function scrapeProjectInfo(projectLink){
     }
 
     const projectInfo = await page.evaluate(() => {
-        
+
         // variables init
         let imageLinks = []
         const hackathonInfo = {}
@@ -22,19 +22,31 @@ async function scrapeProjectInfo(projectLink){
 
         // image links
         const images = document.querySelectorAll(".slick-slide:not(.slick-cloned)")
-        
-        if(images.length != 0){
-           images .forEach(image => {
-                let link = image.querySelector('a').getAttribute('href')
-    
-                imageLinks.push(link)
+
+
+
+        if (images.length != 0) {
+            images.forEach(image => {
+
+                // in case of video
+                if (image.querySelector('.flex-video')) {
+                    const videoSrc = image.querySelector('.flex-video .video-embed').getAttribute("src")
+
+                    imageLinks.push(videoSrc)
+                }
+                else {
+                    let link = image.querySelector('a').getAttribute('href')
+
+                    imageLinks.push(link)
+                }
+
             })
         }
-        
+
         // hackathons submitted to info
         const submissionTo = document.querySelector(".software-list-with-thumbnail li")
 
-        if(submissionTo != null){
+        if (submissionTo != null) {
             const hackathonLinks = submissionTo.querySelector(".challenge_avatar")
 
             const hackathonImageLink = hackathonLinks.querySelector("a img").getAttribute('src')
@@ -43,7 +55,7 @@ async function scrapeProjectInfo(projectLink){
 
             hackathonInfo.hackathonImageLink = hackathonImageLink;
             hackathonInfo.hackathonLink = hackathonLink;
-            hackathonInfo.hackathonText = hackathonText            
+            hackathonInfo.hackathonText = hackathonText
         }
 
         // app details info
@@ -61,7 +73,7 @@ async function scrapeProjectInfo(projectLink){
         const builtWith = []
 
         const builtWithTags = document.querySelectorAll("#built-with ul li")
-        if(builtWithTags.length != 0){
+        if (builtWithTags.length != 0) {
             builtWithTags.forEach(tag => {
                 builtWith.push(tag.innerText);
             })
@@ -71,15 +83,15 @@ async function scrapeProjectInfo(projectLink){
         const tryItOutLinks = document.querySelectorAll(".app-links ul li")
         let gitHubRepo = "";
 
-        if(tryItOutLinks.length != 0){
+        if (tryItOutLinks.length != 0) {
             tryItOutLinks.forEach(li_tag => {
-                if(li_tag.querySelector("a span").innerText == "GitHub Repo")
+                if (li_tag.querySelector("a span").innerText == "GitHub Repo")
                     gitHubRepo += li_tag.querySelector("a").getAttribute("href")
             })
         }
 
         // combine all info into an object
-        const info = {appName, appDescription, imageLinks, hackathonInfo, appDetailsText, builtWith, gitHubRepo}
+        const info = { appName, appDescription, imageLinks, hackathonInfo, appDetailsText, builtWith, gitHubRepo }
 
         return info
 
