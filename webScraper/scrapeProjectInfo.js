@@ -51,11 +51,11 @@ async function scrapeProjectInfo(projectLink) {
 
             const hackathonImageLink = hackathonLinks.querySelector("a img").getAttribute('src')
             const hackathonLink = hackathonLinks.querySelector("a").getAttribute('href')
-            const hackathonText = submissionTo.querySelector(".software-list-content a").innerText
+            const hackathonName = submissionTo.querySelector(".software-list-content a").innerText
 
             hackathonInfo.hackathonImageLink = hackathonImageLink;
             hackathonInfo.hackathonLink = hackathonLink;
-            hackathonInfo.hackathonText = hackathonText
+            hackathonInfo.hackathonName = hackathonName;
         }
 
         // app details info
